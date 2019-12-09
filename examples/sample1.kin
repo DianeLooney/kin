@@ -1,0 +1,10 @@
+(def some_data { a "bcd" })
+(def some_string "bananarama")
+(def some_number 420.69)
+(def some_array [])
+(def some_func
+  (func
+    (a b c)
+    (append some_array 420 69 "blaze it")
+  )
+)
