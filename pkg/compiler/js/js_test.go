@@ -1,7 +1,6 @@
 package js_test
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -20,11 +19,6 @@ func prep(src string, t *testing.T) *js.C {
 	if err != nil {
 		panic(err)
 	}
-	out, err := json.Marshal(n)
-	if err != nil {
-		panic(err)
-	}
-	ioutil.WriteFile(tmpDir+t.Name()+".ast.json", out, os.ModePerm)
 	return js.New(n)
 }
 func TestDefinitions(t *testing.T) {
@@ -42,6 +36,14 @@ func TestLogBuiltin(t *testing.T) {
 	log $ add "Hello, " "World!"`
 	c := prep(src, t)
 	out := c.Compile()
-	ioutil.WriteFile(t.Name(), []byte(out), os.ModePerm)
+	ioutil.WriteFile(tmpDir+t.Name()+".js", []byte(out), os.ModePerm)
+	t.Log(out)
+}
+
+func TestReduceBuiltin(t *testing.T) {
+	src := `log $ reduce add 0 [0 1 2 3 4 5 6 7 8 9 10]`
+	c := prep(src, t)
+	out := c.Compile()
+	ioutil.WriteFile(tmpDir+t.Name()+".js", []byte(out), os.ModePerm)
 	t.Log(out)
 }
