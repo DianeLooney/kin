@@ -17,6 +17,7 @@ func TestParse(t *testing.T) {
 		"empty objects": `{}`,
 		"objects":       `merge {:a 1 :b "bananas"} {:c 2 :b "bananarama"}`,
 		"s-exprs":       `do (something cool)`,
+		"dollar":        `a 4.0 $ b 3.0`,
 	}
 	for n, src := range srcs {
 		t.Run(n, func(t *testing.T) {

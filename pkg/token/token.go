@@ -10,6 +10,7 @@ const (
 	RCurly
 	LSquare
 	RSquare
+	Dollar
 	Identifier
 	Number
 	String
@@ -23,6 +24,7 @@ var lookup = map[byte]T{
 	'}': RCurly,
 	'[': LSquare,
 	']': RSquare,
+	'$': Dollar,
 }
 
 func Lookup(b byte) (t T, ok bool) {

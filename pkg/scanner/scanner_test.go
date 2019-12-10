@@ -192,6 +192,37 @@ func TestHasEOL(t *testing.T) {
 		t.Log(string(lit))
 	}
 }
+func TestDollar(t *testing.T) {
+	s := scanner.NewS(`asdf 4.0 $ wxyz 3.0`)
+	_, _, t1, err := s.Scan()
+	if err != nil {
+		t.Errorf("Expected no error, but received %v", err)
+	}
+	if t1 != token.Identifier {
+		t.Error("Expeccted t1 to be an identifier")
+	}
+	_, _, t2, err := s.Scan()
+	if err != nil {
+		t.Errorf("Expected no error, but received %v", err)
+	}
+	if t2 != token.Number {
+		t.Error("Expeccted t2 to be an identifier")
+	}
+	_, _, t3, err := s.Scan()
+	if err != nil {
+		t.Errorf("Expected no error, but received %v", err)
+	}
+	if t3 != token.Dollar {
+		t.Error("Expeccted t3 to be an identifier")
+	}
+	_, _, t4, err := s.Scan()
+	if err != nil {
+		t.Errorf("Expected no error, but received %v", err)
+	}
+	if t4 != token.Identifier {
+		t.Error("Expeccted t1 to be an identifier")
+	}
+}
 func TestEOF(t *testing.T) {
 	s := scanner.NewS(``)
 	_, _, _, err := s.Scan()
