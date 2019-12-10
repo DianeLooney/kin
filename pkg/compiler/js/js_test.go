@@ -11,6 +11,8 @@ import (
 	"github.com/dianelooney/kin/pkg/scanner"
 )
 
+const tmpDir = "../../../tmp/"
+
 func prep(src string, t *testing.T) *js.C {
 	sc := scanner.NewS(src)
 	p := parser.New(sc)
@@ -22,7 +24,7 @@ func prep(src string, t *testing.T) *js.C {
 	if err != nil {
 		panic(err)
 	}
-	ioutil.WriteFile(t.Name()+".ast.yml", out, os.ModePerm)
+	ioutil.WriteFile(tmpDir+t.Name()+".ast.json", out, os.ModePerm)
 	return js.New(n)
 }
 func TestDefinitions(t *testing.T) {
@@ -32,7 +34,7 @@ func TestDefinitions(t *testing.T) {
 	`
 	c := prep(src, t)
 	out := c.Compile()
-	ioutil.WriteFile(t.Name(), []byte(out), os.ModePerm)
+	ioutil.WriteFile(tmpDir+t.Name()+".js", []byte(out), os.ModePerm)
 	t.Log(out)
 }
 func TestLogBuiltin(t *testing.T) {

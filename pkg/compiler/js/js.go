@@ -16,7 +16,7 @@ type C struct {
 }
 
 func (c *C) Compile() (out string) {
-	return runtime + c.render(c.root)
+	return fmt.Sprintf(runtime, c.render(c.root))
 }
 func (c *C) render(node ast.Node) (out string) {
 	switch n := node.(type) {
@@ -67,16 +67,3 @@ func (c *C) renderSExpression(n *ast.SExpression) (out string) {
 	}
 	return strings.Join(strs, ", ")
 }
-
-var runtime = `
-
-// BEGIN RUNTIME
-const log = console.log;
-const add = x => y => x + y;
-const head = x => x[0];
-const tail = x => x.slice(1);
-const init = x => x.slice(0, x.length - 1);
-const last = x => x[x.length];
-// END RUNTIME
-
-`
