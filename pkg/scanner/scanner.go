@@ -1,7 +1,6 @@
 package scanner
 
 import (
-	"fmt"
 	"io"
 	"regexp"
 
@@ -36,7 +35,6 @@ func (s *Scanner) HasEOL() bool {
 		case '\n':
 			return true
 		default:
-			fmt.Printf("%s\n", []byte{c})
 			return false
 		}
 	}
@@ -70,6 +68,22 @@ func (s *Scanner) Scan() (literal []byte, p token.Position, t token.T, err error
 		return s.scan(symRegexp, token.Symbol)
 	}
 	return s.scan(identRegexp, token.Identifier)
+}
+
+func (s *Scanner) Peek() (b byte, ok bool) {
+	for _, c := range s.source {
+		switch c {
+		case ' ':
+			continue
+		case '\t':
+			continue
+		case '\n':
+			continue
+		default:
+			return c, true
+		}
+	}
+	return 0, false
 }
 
 func (s *Scanner) skipWhitespace() {
