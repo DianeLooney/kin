@@ -20,6 +20,10 @@ func (c *C) Compile() (out string) {
 }
 func (c *C) render(node ast.Node) (out string) {
 	switch n := node.(type) {
+	case *ast.Document:
+		return c.renderDocument(n)
+	case *ast.Definition:
+		return c.renderDefinition(n)
 	case *ast.Expression:
 		return c.renderExpression(n)
 	case *ast.Identifier:
@@ -31,7 +35,17 @@ func (c *C) render(node ast.Node) (out string) {
 	default:
 		return fmt.Sprintf("/* NYI - %T */", n)
 	}
-
+}
+func (c *C) renderDocument(n *ast.Document) (out string) {
+	var strs = make([]string, len(n.Children))
+	for i, child := range n.Children {
+		strs[i] = c.render(child)
+	}
+	return strings.Join(strs, "\n")
+}
+func (c *C) renderDefinition(n *ast.Definition) (out string) {
+	const tmpl = `const %v = %v;`
+	return fmt.Sprintf(tmpl, c.render(n.Identifier), c.render(n.Value))
 }
 func (c *C) renderExpression(n *ast.Expression) (out string) {
 	for _, child := range n.Children {
@@ -46,11 +60,12 @@ func (c *C) renderString(n *ast.String) (out string) {
 	return string(n.Raw)
 }
 func (c *C) renderSExpression(n *ast.SExpression) (out string) {
+	const template = `(()=>{return %v})()`
 	var strs []string
 	for _, child := range n.Children {
 		strs = append(strs, c.render(child))
 	}
-	return strings.Join(strs, ",")
+	return strings.Join(strs, ", ")
 }
 
 var runtime = `

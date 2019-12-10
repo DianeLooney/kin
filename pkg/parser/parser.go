@@ -22,7 +22,7 @@ type Parser struct {
 }
 
 func (p *Parser) Parse() (ast.Node, error) {
-	e := ast.Expression{}
+	e := ast.Document{}
 	// e.Children = append(e.Children, &ast.Reference{Raw: []byte("do")})
 	for {
 		_, ok := p.sc.Peek()
@@ -50,7 +50,6 @@ func (p *Parser) parseExpression() (ast.Node, error) {
 		if p.sc.HasEOL() && !first {
 			break
 		}
-		first = false
 		b, ok := p.sc.Peek()
 		if !ok {
 			return nil, io.ErrUnexpectedEOF
@@ -72,7 +71,25 @@ func (p *Parser) parseExpression() (ast.Node, error) {
 		if err != nil {
 			return nil, err
 		}
+		if def, ok := val.(*ast.Identifier); first && ok && def.IsDef() {
+			d := ast.Definition{}
+			ident, err := p.parseValue()
+			if err != nil {
+				return nil, err
+			}
+			d.Identifier, ok = ident.(*ast.Identifier)
+			if !ok {
+				return nil, errors.New("Expected identifier")
+			}
+			e, err := p.parseExpression()
+			if err != nil {
+				return nil, err
+			}
+			d.Value = e
+			return &d, nil
+		}
 		e.Children = append(e.Children, val)
+		first = false
 	}
 	return &e, nil
 }

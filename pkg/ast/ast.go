@@ -1,6 +1,8 @@
 package ast
 
 import (
+	"bytes"
+
 	"github.com/dianelooney/kin/pkg/token"
 )
 
@@ -8,60 +10,78 @@ type Node interface {
 	Position() token.Position
 }
 
-type node struct {
+type N struct {
 	P token.Position
 }
 
-func (n *node) Position() token.Position {
+func (n *N) Position() token.Position {
 	return n.P
 }
 
-type Expression struct {
-	node
+type Document struct {
+	N        `json:"-"`
 	Children []Node
 }
+
+type Expression struct {
+	N        `json:"-"`
+	Children []Node
+}
+
+type Definition struct {
+	N          `json:"-"`
+	Identifier *Identifier
+	Value      Node
+}
+
 type SExpression struct {
-	node
+	N        `json:"-"`
 	Children []Node
 }
 
 type Reference struct {
-	node
+	N   `json:"-"`
 	Raw []byte
 }
 
 type Number struct {
-	node
-	Raw []byte
+	N   `json:"-"`
+	Raw []byte `json:","`
 }
 
 type Identifier struct {
-	node
+	N   `json:"-"`
 	Raw []byte
 }
 
+var defBytes = []byte("def")
+
+func (i *Identifier) IsDef() bool {
+	return bytes.Equal(i.Raw, defBytes)
+}
+
 type Symbol struct {
-	node
+	N   `json:"-"`
 	Raw []byte
 }
 
 type String struct {
-	node
+	N   `json:"-"`
 	Raw []byte
 }
 
 type Array struct {
-	node
+	N      `json:"-"`
 	Values []Node
 }
 
 type Object struct {
-	node
+	N     `json:"-"`
 	Pairs []Node
 }
 
 type ObjectPair struct {
-	node
+	N     `json:"-"`
 	Key   Node
 	Value Node
 }
