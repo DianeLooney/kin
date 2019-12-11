@@ -1,0 +1,5 @@
+def next_fib func x add (last x) (last $ init x)
+def fib do_while (λ x gt 4000000 $ last x) [1 2] (λ x push x $ next_fib x)
+def evens filter (λ x not $ mod x 2) fib
+log evens
+log $ reduce add 0 evens 

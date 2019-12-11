@@ -90,11 +90,23 @@ func (p *Parser) parseExpression() (ast.Node, error) {
 		}
 		if fun, ok := val.(*ast.Identifier); first && ok && fun.IsFunc() {
 			f := ast.Function{}
-			args, err := p.parseArgumentList()
-			if err != nil {
-				return nil, err
+			b, ok := p.sc.Peek()
+			if !ok {
+				return nil, io.ErrUnexpectedEOF
 			}
-			f.Args = args.(*ast.ArgList)
+			if b == '(' {
+				args, err := p.parseArgumentList()
+				if err != nil {
+					return nil, err
+				}
+				f.Args = args.(*ast.ArgList)
+			} else {
+				v, err := p.parseValue()
+				if err != nil {
+					return nil, err
+				}
+				f.Args = &ast.ArgList{Arguments: []ast.Node{v}}
+			}
 			body, err := p.parseExpression()
 			if err != nil {
 				return nil, err
