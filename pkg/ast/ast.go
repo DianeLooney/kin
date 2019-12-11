@@ -33,6 +33,15 @@ type Definition struct {
 	Identifier *Identifier
 	Value      Node
 }
+type Function struct {
+	N    `json:"-"`
+	Args *ArgList
+	Body Node
+}
+type ArgList struct {
+	N         `json:"-"`
+	Arguments []Node
+}
 
 type SExpression struct {
 	N        `json:"-"`
@@ -55,9 +64,13 @@ type Identifier struct {
 }
 
 var defBytes = []byte("def")
+var funcBytes = []byte("func")
 
 func (i *Identifier) IsDef() bool {
 	return bytes.Equal(i.Raw, defBytes)
+}
+func (i *Identifier) IsFunc() bool {
+	return bytes.Equal(i.Raw, funcBytes)
 }
 
 type Symbol struct {

@@ -88,6 +88,20 @@ func (p *Parser) parseExpression() (ast.Node, error) {
 			d.Value = e
 			return &d, nil
 		}
+		if fun, ok := val.(*ast.Identifier); first && ok && fun.IsFunc() {
+			f := ast.Function{}
+			args, err := p.parseArgumentList()
+			if err != nil {
+				return nil, err
+			}
+			f.Args = args.(*ast.ArgList)
+			body, err := p.parseExpression()
+			if err != nil {
+				return nil, err
+			}
+			f.Body = body
+			return &f, nil
+		}
 		e.Children = append(e.Children, val)
 		first = false
 	}
@@ -125,6 +139,33 @@ func (p *Parser) parseValue() (ast.Node, error) {
 	}
 
 	return nil, fmt.Errorf("NYI - %s", lit)
+}
+func (p *Parser) parseArgumentList() (ast.Node, error) {
+	_, _, t, err := p.sc.Scan()
+	if err != nil {
+		return nil, err
+	}
+	if t != token.LParen {
+		return nil, errors.New("Expected '(' to start argument list")
+	}
+
+	n := ast.ArgList{}
+	for {
+		b, ok := p.sc.Peek()
+		if !ok {
+			return nil, io.ErrUnexpectedEOF
+		}
+		if b == ')' {
+			p.sc.Scan()
+			break
+		}
+		v, err := p.parseValue()
+		if err != nil {
+			return nil, err
+		}
+		n.Arguments = append(n.Arguments, v)
+	}
+	return &n, nil
 }
 func (p *Parser) parseSExpression() (ast.Node, error) {
 	_, _, t, err := p.sc.Scan()

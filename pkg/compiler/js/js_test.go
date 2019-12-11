@@ -47,3 +47,10 @@ func TestReduceBuiltin(t *testing.T) {
 	ioutil.WriteFile(tmpDir+t.Name()+".js", []byte(out), os.ModePerm)
 	t.Log(out)
 }
+func TestFunc(t *testing.T) {
+	src := `def something func (a b) add a b`
+	c := prep(src, t)
+	out := c.Compile()
+	ioutil.WriteFile(tmpDir+t.Name()+".js", []byte(out), os.ModePerm)
+	t.Log(out)
+}

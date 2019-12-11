@@ -36,6 +36,8 @@ func (c *C) render(node ast.Node) (out string) {
 		return c.renderArray(n)
 	case *ast.SExpression:
 		return c.renderSExpression(n)
+	case *ast.Function:
+		return c.renderFunction(n)
 	default:
 		return fmt.Sprintf("/* NYI - %T */", n)
 	}
@@ -45,7 +47,7 @@ func (c *C) renderDocument(n *ast.Document) (out string) {
 	for i, child := range n.Children {
 		strs[i] = c.render(child)
 	}
-	return strings.Join(strs, "\n")
+	return strings.Join(strs, ";\n")
 }
 func (c *C) renderDefinition(n *ast.Definition) (out string) {
 	const tmpl = `const %v = %v;`
@@ -76,6 +78,15 @@ func (c *C) renderArray(n *ast.Array) (out string) {
 }
 func (c *C) renderNumber(n *ast.Number) (out string) {
 	return string(n.Raw)
+}
+func (c *C) renderFunction(n *ast.Function) (out string) {
+	const tmpl = `(%v => %v)`
+	args := make([]string, len(n.Args.Arguments))
+	for i, arg := range n.Args.Arguments {
+		args[i] = c.render(arg)
+	}
+	body := c.render(n.Body)
+	return fmt.Sprintf(tmpl, strings.Join(args, " => "), body)
 }
 func (c *C) renderSExpression(n *ast.SExpression) (out string) {
 	const template = `(()=>{return %v})()`
