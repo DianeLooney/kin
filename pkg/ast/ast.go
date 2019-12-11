@@ -65,12 +65,16 @@ type Identifier struct {
 
 var defBytes = []byte("def")
 var funcBytes = []byte("func")
+var lambdaBytes = []byte("λ")
 
 func (i *Identifier) IsDef() bool {
 	return bytes.Equal(i.Raw, defBytes)
 }
 func (i *Identifier) IsFunc() bool {
 	return bytes.Equal(i.Raw, funcBytes)
+}
+func (i *Identifier) IsLambda() bool {
+	return bytes.Equal(i.Raw, lambdaBytes)
 }
 
 type Symbol struct {

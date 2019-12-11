@@ -102,6 +102,20 @@ func (p *Parser) parseExpression() (ast.Node, error) {
 			f.Body = body
 			return &f, nil
 		}
+		if lambda, ok := val.(*ast.Identifier); first && ok && lambda.IsLambda() {
+			f := ast.Function{}
+			v, err := p.parseValue()
+			if err != nil {
+				return nil, err
+			}
+			f.Args = &ast.ArgList{Arguments: []ast.Node{v}}
+			body, err := p.parseExpression()
+			if err != nil {
+				return nil, err
+			}
+			f.Body = body
+			return &f, nil
+		}
 		e.Children = append(e.Children, val)
 		first = false
 	}
