@@ -10,6 +10,8 @@ const (
 	RCurly
 	LSquare
 	RSquare
+	LTag
+	RTag
 	Dollar
 	Identifier
 	Number
@@ -24,6 +26,8 @@ var lookup = map[byte]T{
 	'}': RCurly,
 	'[': LSquare,
 	']': RSquare,
+	'<': LTag,
+	'>': RTag,
 	'$': Dollar,
 }
 

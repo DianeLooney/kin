@@ -73,14 +73,11 @@ func (p *Parser) parseExpression() (ast.Node, error) {
 		}
 		if def, ok := val.(*ast.Identifier); first && ok && def.IsDef() {
 			d := ast.Definition{}
-			ident, err := p.parseValue()
+			v, err := p.parseValue()
 			if err != nil {
 				return nil, err
 			}
-			d.Identifier, ok = ident.(*ast.Identifier)
-			if !ok {
-				return nil, errors.New("Expected identifier")
-			}
+			d.Name = v
 			e, err := p.parseExpression()
 			if err != nil {
 				return nil, err
@@ -145,6 +142,8 @@ func (p *Parser) parseValue() (ast.Node, error) {
 		return p.parseObject()
 	case '[':
 		return p.parseArray()
+	case '<':
+		return p.parseTag()
 	}
 
 	lit, _, t, err := p.sc.Scan()
@@ -213,6 +212,33 @@ func (p *Parser) parseSExpression() (ast.Node, error) {
 			break
 		}
 		v, err := p.parseExpression()
+		if err != nil {
+			return nil, err
+		}
+		n.Children = append(n.Children, v)
+	}
+	return &n, nil
+}
+func (p *Parser) parseTag() (ast.Node, error) {
+	_, _, t, err := p.sc.Scan()
+	if err != nil {
+		return nil, err
+	}
+	if t != token.LTag {
+		return nil, errors.New("Expected '<' to start tag definition")
+	}
+
+	n := ast.Tag{}
+	for {
+		b, ok := p.sc.Peek()
+		if !ok {
+			return nil, io.ErrUnexpectedEOF
+		}
+		if b == '>' {
+			p.sc.Scan()
+			break
+		}
+		v, err := p.parseValue()
 		if err != nil {
 			return nil, err
 		}

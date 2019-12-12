@@ -51,7 +51,7 @@ func (c *C) renderDocument(n *ast.Document) (out string) {
 }
 func (c *C) renderDefinition(n *ast.Definition) (out string) {
 	const tmpl = `const %v = %v;`
-	return fmt.Sprintf(tmpl, c.render(n.Identifier), c.render(n.Value))
+	return fmt.Sprintf(tmpl, c.render(n.Name), c.render(n.Value))
 }
 func (c *C) renderExpression(n *ast.Expression) (out string) {
 	if len(n.Children) == 1 {

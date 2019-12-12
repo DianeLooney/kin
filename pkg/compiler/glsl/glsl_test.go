@@ -31,10 +31,26 @@ func EqualTrimmed(t *testing.T, s1 string, s2 string) {
 	s2 = strings.Trim(s2, " \t\n")
 	Equal(t, s1, s2)
 }
-
+func testIt(t *testing.T, in string, expected string) {
+	out := compileS(in, t)
+	EqualTrimmed(t, out, expected)
+}
 func TestCanRender(t *testing.T) {
 	in := ``
 	out := compileS(in, t)
 	expected := `#version 330`
 	EqualTrimmed(t, out, expected)
+}
+
+const mainSrc = `
+def <main void> func () set outputColor 0
+`
+const mainFix = `
+#version330
+void main() {
+};
+`
+
+func TestCanRenderMain(t *testing.T) {
+	testIt(t, mainSrc, mainFix)
 }

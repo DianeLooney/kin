@@ -29,9 +29,9 @@ type Expression struct {
 }
 
 type Definition struct {
-	N          `json:"-"`
-	Identifier *Identifier
-	Value      Node
+	N     `json:"-"`
+	Name  Node
+	Value Node
 }
 type Function struct {
 	N    `json:"-"`
@@ -44,6 +44,11 @@ type ArgList struct {
 }
 
 type SExpression struct {
+	N        `json:"-"`
+	Children []Node
+}
+
+type Tag struct {
 	N        `json:"-"`
 	Children []Node
 }

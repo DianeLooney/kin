@@ -132,5 +132,5 @@ func (s *Scanner) scan(r *regexp.Regexp, tok token.T) (literal []byte, p token.P
 
 var numRegexp = regexp.MustCompile(`^[+-]?((\d+(\.\d*)?)|(\.\d+))`)
 var strRegexp = regexp.MustCompile(`^"(?:[^"\\]|\\.)*"`)
-var symRegexp = regexp.MustCompile(`^:[^\s\()[\]{}]+`)
-var identRegexp = regexp.MustCompile(`^[^\s\()[\]{}]+`)
+var symRegexp = regexp.MustCompile(`^:[^\s\()[\]{\<>}]+`)
+var identRegexp = regexp.MustCompile(`^[^\s\()[\]{}\<>]+`)
